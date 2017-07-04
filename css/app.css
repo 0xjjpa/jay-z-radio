@@ -15,13 +15,17 @@ h1, h2, h3 {
 
 .Song {
   display: flex;
+  border: 1px solid #2D2D2D;
+  width: 640px;
+  box-shadow: inset 0 0 1em #eee, 0 0 1em #666;
+  margin: auto;
 }
 
 .Song__metadata {
   display: flex;
   flex-flow: row wrap;
-  padding: 0 20px;
-  width: 400px;
+  padding: 10px 20px 0;
+  width: calc(100% - 150px - 40px); /* Total width - Cover - Padding */
 }
 
 .Song__title,
@@ -33,6 +37,17 @@ h1, h2, h3 {
   flex: 1 100%;
 }
 
+.Song__title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.Song__title small {
+    color: #A7A7A7;
+    font-size: 0.8em;
+}
+
 .Song__frequency-chart {
   height: 36px;
   background-color: blue;
@@ -40,7 +55,18 @@ h1, h2, h3 {
 
 .Song__player-progress {
   height: 6px;
-  background-color: green;
+  margin-top: 5px;
+  display: block;
+  border: 0 none;
+  padding: 0;
+}
+
+progress::-webkit-progress-value {
+  background: #474747;
+  transition : width 1010ms linear;
+}
+progress::-webkit-progress-bar {
+  background: #ECECEC;
 }
 
 .Song__time-progress, .Song__controls {
@@ -52,16 +78,31 @@ h1, h2, h3 {
 .Song__cover {
   image-rendering: pixelated;
 }
+
 .Cover__image {
   width: 150px;
 }
 
+.Song__controls {
+  align-self: flex-end;
+}
+
 .Control__button {
   flex: 1 auto;
-  background-color: black;
   height: 40px;
 }
 
 .Control__button:nth-child(2) {
-  margin: 0 10px;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  -webkit-border-image: 
+  -webkit-gradient(linear, 0 100%, 0 0, from(#aaa), to(rgba(0, 0, 0, 0))) 1 100%;
+-webkit-border-image: 
+  -webkit-linear-gradient(bottom, #aaa, rgba(0, 0, 0, 0)) 1 100%;
+-moz-border-image:
+  -moz-linear-gradient(bottom, #aaa, rgba(0, 0, 0, 0)) 1 100%;  
+-o-border-image:
+  -o-linear-gradient(bottom, #aaa, rgba(0, 0, 0, 0)) 1 100%;
+border-image:
+  linear-gradient(to top, #aaa, rgba(0, 0, 0, 0)) 1 100%;
 }
