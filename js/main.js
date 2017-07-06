@@ -1,5 +1,7 @@
 function PlayerTemplate(render, player) {
   render`
+  <div class="Player">
+  <img class="Player__background" src="${player.track.img}" />
   <div class="Song">
     <div class="Song__cover">
       <img class="Cover__image" src="${player.track.img}" />
@@ -15,9 +17,10 @@ function PlayerTemplate(render, player) {
       <div class="Song__controls">
         <a role="button" onClick="${player.track.rewind.bind(player.track)}" class="Control__button Control__button--is-backwards">&#x23ea;</a>
         <a role="button" onClick="${player.track.toggle.bind(player.track)}" class="Control__button Control__button--is-play">&#x23ef;</a>
-        <a role="button" class="Control__button Control__button--is-forward">&#x23e9;</a>
+        <a role="button" onClick="${player.nextSong.bind(player)}" class="Control__button Control__button--is-forward">&#x23e9;</a>
       </div>
     </div>
+  </div>
   </div>
   `;
 }
@@ -33,8 +36,7 @@ class Player {
     this.audio.src = this.song.previewUrl;
     this.track = new Track(this.song.artworkUrl100, this.song.trackName, this.song.collectionName, this.song.trackTimeMillis, this.audio)
   }
-  songEnded() {
-    console.log("Song ended")
+  nextSong() {
     this.loadSong();
   }
 }
@@ -83,15 +85,12 @@ class Track {
   }
 }
 
-const renderNode = hyperHTML.bind(document.getElementById('song-root'))
+const renderNode = hyperHTML.bind(document.getElementById('player-root'))
 const jayZdataPromise = $.when($.getJSON("/requests/jayz-1.json"));
 
 jayZdataPromise.then(
   jayZdata => {
-    (document.querySelector("#response").innerHTML = prettyjson.render(
-      jayZdata
-    ))
-    
+
     const context = new AudioContext();
     const analyser = context.createAnalyser();
     const audio = new Audio();
@@ -105,7 +104,7 @@ jayZdataPromise.then(
     
     const playerInstance = new Player(jayZdata.results, audio)
     
-    audio.addEventListener('ended', playerInstance.songEnded.bind(playerInstance))
+    audio.addEventListener('ended', playerInstance.nextSong.bind(playerInstance))
     
     PlayerTemplate(renderNode, playerInstance)
     setInterval(PlayerTemplate, 0, renderNode, playerInstance);
