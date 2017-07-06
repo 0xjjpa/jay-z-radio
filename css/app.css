@@ -63,7 +63,7 @@ h1, h2, h3 {
 
 progress::-webkit-progress-value {
   background: #474747;
-  transition : width 1010ms linear;
+  /*transition : width 1010ms linear;*/
 }
 progress::-webkit-progress-bar {
   background: #ECECEC;
@@ -89,7 +89,11 @@ progress::-webkit-progress-bar {
 
 .Control__button {
   flex: 1 auto;
-  height: 40px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
 }
 
 .Control__button:nth-child(2) {
