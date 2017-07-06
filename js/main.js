@@ -1,25 +1,42 @@
-function SongTemplate(render, state) {
+function PlayerTemplate(render, player) {
   render`
   <div class="Song">
     <div class="Song__cover">
-      <img class="Cover__image" src="${state.img}" />
+      <img class="Cover__image" src="${player.track.img}" />
     </div>
     <div class="Song__metadata">
-      <h3 class="Song__title">${state.title}<small> ${state.album}</small></h3>
+      <h3 class="Song__title">${player.track.title}<small> ${player.track.album}</small></h3>
       <div class="Song__frequency-chart"></div>
-      <progress value="${state.audio.currentTime}" max="${state.max}" class="Song__player-progress"></progress>
+      <progress value="${player.track.audio.currentTime}" max="${player.track.max}" class="Song__player-progress"></progress>
       <div class="Song__time-progress">
-        <span class="Time-Progress__seconds Time-Progress__seconds--is-elapsed">0:${state.elapsedSeconds}</span>
-        <span class="Time-Progress__seconds Time-Progress__seconds--is-remaining">0:${state.remainingSeconds}</span>
+        <span class="Time-Progress__seconds Time-Progress__seconds--is-elapsed">0:${player.track.elapsedSeconds}</span>
+        <span class="Time-Progress__seconds Time-Progress__seconds--is-remaining">0:${player.track.remainingSeconds}</span>
       </div>
       <div class="Song__controls">
-        <a role="button" onClick="${state.rewind.bind(state)}" class="Control__button Control__button--is-backwards">&#x23ea;</a>
-        <a role="button" onClick="${state.toggle.bind(state)}" class="Control__button Control__button--is-play">&#x23ef;</a>
+        <a role="button" onClick="${player.track.rewind.bind(player.track)}" class="Control__button Control__button--is-backwards">&#x23ea;</a>
+        <a role="button" onClick="${player.track.toggle.bind(player.track)}" class="Control__button Control__button--is-play">&#x23ef;</a>
         <a role="button" class="Control__button Control__button--is-forward">&#x23e9;</a>
       </div>
     </div>
   </div>
   `;
+}
+
+class Player {
+  constructor(playlist, audio) {
+    this.playlist = playlist
+    this.audio = audio
+    this.loadSong();
+  }
+  loadSong() {
+    this.song = this.playlist[Math.floor(Math.random()*49)]
+    this.audio.src = this.song.previewUrl;
+    this.track = new Track(this.song.artworkUrl100, this.song.trackName, this.song.collectionName, this.song.trackTimeMillis, this.audio)
+  }
+  songEnded() {
+    console.log("Song ended")
+    this.loadSong();
+  }
 }
 
 class Track {
@@ -81,21 +98,17 @@ jayZdataPromise.then(
     
     audio.crossOrigin = "anonymous";
     audio.controls = true;
-    audio.autoplay = true;
-    audio.loop = true;
     
     const source = context.createMediaElementSource(audio);
     source.connect(analyser);
     analyser.connect(context.destination);
     
-    let track = jayZdata.results[Math.floor(Math.random()*49)]
+    const playerInstance = new Player(jayZdata.results, audio)
     
-    audio.src = track.previewUrl;
+    audio.addEventListener('ended', playerInstance.songEnded.bind(playerInstance))
     
-    let trackInstance = new Track(track.artworkUrl100, track.trackName, track.collectionName, track.trackTimeMillis, audio)
-    SongTemplate(renderNode, trackInstance)
-    
-    setInterval(SongTemplate, 0, renderNode, trackInstance);
+    PlayerTemplate(renderNode, playerInstance)
+    setInterval(PlayerTemplate, 0, renderNode, playerInstance);
   }
 );
 
