@@ -1,6 +1,7 @@
 body {
   padding: 0%;
   height: 100vh;
+  overflow: hidden;
 }
 
 h1, h2, h3 {
@@ -19,11 +20,11 @@ h1, h2, h3 {
 }
 .Player__background {
   position: absolute;
-  width: 110%;
+  width: 120%;
   z-index: -1;
   left: -10%;
   top: -10vh;
-  height: 110vh;
+  height: 120vh;
   -webkit-filter: blur(15px);
   -moz-filter: blur(15px);
   -o-filter: blur(15px);
@@ -70,7 +71,6 @@ h1, h2, h3 {
 
 .Song__frequency-chart {
   height: 36px;
-  background-color: blue;
 }
 
 .Song__player-progress {
@@ -101,6 +101,7 @@ progress::-webkit-progress-bar {
 
 .Cover__image {
   width: 150px;
+  height: 150px;
 }
 
 .Song__controls {
@@ -112,7 +113,7 @@ progress::-webkit-progress-bar {
   height: 20px;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 5px 0 20px;
   text-align: center;
 }
 
