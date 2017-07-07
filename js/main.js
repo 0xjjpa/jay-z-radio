@@ -38,13 +38,14 @@ function linearScale(domain, range, clamp) {
 }
 
 class Player {
-  constructor(playlist, audio) {
+  constructor(playlist, audio, totalSongs) {
     this.playlist = playlist
     this.audio = audio
+    this.totalSongs = totalSongs
     this.loadSong();
   }
   loadSong() {
-    this.song = this.playlist[Math.floor(Math.random()*49)]
+    this.song = this.playlist[Math.floor(Math.random()*this.totalSongs)]
     this.audio.src = this.song.previewUrl;
     this.track = new Track(this.song.artworkUrl100, this.song.trackName, this.song.collectionName, this.song.trackTimeMillis, this.audio)
   }
@@ -56,8 +57,6 @@ class Player {
     const context = canvas.getContext('2d');
     const canvasWidth = 450;
     const canvasHeight = 36;
-    
-    
     
     const draw = function() {
       const drawVisual = requestAnimationFrame(draw);
@@ -71,24 +70,18 @@ class Player {
       let barHeight;
       let x = 0;
       
-      //const scale = linearScale([0, 255], [0, 72]);
       const scale = linearScale([0, 255], [0, 100]);
 
       for(let i = 0; i < bufferLength; i++) {
-        barHeight = ~~scale(dataArray[i]);
+        barHeight = scale(dataArray[i]) << 0;
         
         context.fillStyle = `rgb(${barHeight}, ${barHeight}, ${barHeight})`;
         context.fillRect( x, canvasHeight-barHeight/4, barWidth, barHeight/4);
-        //context.fillRect( x, canvasHeight-barHeight/2, barWidth, barHeight/4);
-        //context.fillRect( x, canvasHeight/2, barWidth, barHeight/4 );
 
         x += barWidth + 2;
       }
     };
-
     draw();
-    
-    
   }
 }
 
@@ -98,7 +91,6 @@ class Track {
     this.title = title;
     this.album = album;
     this.audio = audio
-    //this.max = trackTimeMillis / 10000
     this.max = 30
     
     this.play();
@@ -137,11 +129,15 @@ class Track {
 }
 
 const renderNode = hyperHTML.bind(document.getElementById('player-root'))
-const jayZdataPromise = $.when($.getJSON("/requests/jayz-1.json"));
 
-jayZdataPromise.then(
-  jayZdata => {
+const request = new XMLHttpRequest();
+request.open('GET', '/requests/jayz.json', true);
 
+request.onload = function() {
+  if (request.status >= 200 && request.status < 400) {
+    
+    const jayZdata = JSON.parse(request.responseText);
+    
     const context = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = context.createAnalyser();
     const audio = new Audio();
@@ -158,8 +154,14 @@ jayZdataPromise.then(
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     
-
-    const playerInstance = new Player(jayZdata.results, audio)
+    const playlist = jayZdata.results.filter(
+      result => result.wrapperType == "track" && 
+      result.previewUrl != null && 
+      result.kind == "song"
+    )
+    const totalTracks = playlist.length;
+    
+    const playerInstance = new Player(playlist, audio, totalTracks)
     
     audio.addEventListener('ended', playerInstance.nextSong.bind(playerInstance))
     PlayerTemplate(renderNode, playerInstance)
@@ -167,6 +169,7 @@ jayZdataPromise.then(
     
     setInterval(PlayerTemplate, 0, renderNode, playerInstance);
   }
-);
+};
 
+request.send();
 
