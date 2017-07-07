@@ -1,26 +1,24 @@
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+# Jay Z Radio
+
+📻  Only jiggaman songs. Submission for /r/codingprompts (Week 1). Using iTunes Affiliate Search API and preview songs (preloaded requests)
+
+## Technologies
+
+* hyperHTML for templating 📖
+* Web Audio API for 🎶
+* Canvas for chart animation 📊
 
 
-Hi there! Welcome to Cloud9 IDE!
+Works in Chrome + Firefox, lags poorly in Safari, untested in IE.
 
-To get you started, we included a small hello world application.
+## Requests
 
-1) Open the hello-world.html file
+All songs were preloaded to avoid hitting the API everytime, since there's a soft
+limit of 20 calls per minute. Here are the requests made:
 
-2) Click on the Preview button to open a live preview pane
+**All albums by Jay Z**<br/>
+https://itunes.apple.com/lookup?id=112080&entity=album
 
-3) Make some changes to the file, save, watch the preview, and have fun!
-
-Happy coding!
-The Cloud9 IDE team
-
-
-## Support & Documentation
-
-Visit http://docs.c9.io for documentation, or http://support.c9.io for support.
-To watch some training videos, visit http://www.youtube.com/user/c9ide
+**All songs per album**<br/>
+https://itunes.apple.com/lookup?id=COLLECTIONID&entity=song<br/>
+e.g. https://itunes.apple.com/lookup?id=1256675529&entity=song<br/>
